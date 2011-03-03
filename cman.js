@@ -118,8 +118,12 @@ $G = function() {
         oldCompSetup: oldCompSetup
       });
     }
-    if (c.init && !(c.init._generated != null)) {
-      c.init = CMan.genInit(c.init);
+    if ((c.init != null) && typeof c.init === 'function') {
+      if (c.init._generated == null) {
+        c.init = CMan.genInit(c.init);
+      }
+    } else {
+      c.init = CMan.genInit(function() {});
     }
   }
   return $C.apply(null, [arguments.callee.baseObject].concat(__slice.call(components)));

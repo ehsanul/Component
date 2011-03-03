@@ -34,8 +34,9 @@ $C = function() {
     var args;
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     if (this.init != null) {
-      return this.init.apply(this, args);
+      this.init.apply(this, args);
     }
+    return null;
   };
   F.prototype = comp;
   F.extend = function() {

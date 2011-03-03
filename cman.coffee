@@ -54,7 +54,7 @@ CMan =
       if opts.compInit?
         if @_compInit?
           for c in opts.compInit
-            @_compInit.push(c) unless @_compInit.indexOf(c) != -1
+            @_compInit.push(c) if @_compInit.indexOf(c) == -1
         else
           @_compInit = opts.compInit
 
@@ -94,8 +94,11 @@ $G = (components...)->
         oldCompSetup: oldCompSetup
       )
    
-    if c.init && !c.init._generated?
-      c.init = CMan.genInit(c.init)
+    if c.init? && typeof c.init == 'function'
+      c.init = CMan.genInit(c.init) unless c.init._generated?
+    else
+      c.init = CMan.genInit( -> )
+
   $C(arguments.callee.baseObject, components...)
 
 $G.baseObject = {}
