@@ -1,6 +1,6 @@
 var $C, $G, CMan;
 var __slice = Array.prototype.slice;
-$C = require('./component-core').$C;
+$C = require('./component-core');
 CMan = {
   genInit: function(func) {
     var init;
@@ -130,8 +130,5 @@ $G = function() {
 };
 $G.baseObject = {};
 if ((typeof module != "undefined" && module !== null ? module.exports : void 0) != null) {
-  module.exports = {
-    CMan: CMan,
-    $G: $G
-  };
+  module.exports = $G;
 }

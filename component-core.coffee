@@ -1,12 +1,10 @@
-#TODO: tests!
-
 Component = ->
 Component::extend = (components...)->
     for c in components
       c = c.prototype if c.prototype?
       #^ makes `x=$C(a:1); y=$C(x,b:2)` work
       #^ maybe switch to `c = c.prototype if typeof c == 'function'`
-      c.compSetup.apply(this) if c.compSetup?
+      c.compSetup() if c.compSetup?
       #^ gives components "extend-time" access, useful for accumulators
       for key, val of c
         this[key] = val unless key == 'compSetup'
@@ -25,6 +23,4 @@ $C = (components...)->
   return F
 
 if module?.exports?
-  module.exports =
-    Component: Component
-    $C: $C
+  module.exports = $C

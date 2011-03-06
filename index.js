@@ -1,9 +1,7 @@
-var core = require('./component-core');
-var more = require('./cman');
+var $C = require('./component-core');
+var $G = require('./cman');
 
 module.exports = {
-  $C: core.$C,
-  Component: core.Component,
-  CMan: more.CMan,
-  $G: more.$G
+  $C: $C,
+  $G: $G
 }

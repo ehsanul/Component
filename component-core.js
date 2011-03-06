@@ -11,7 +11,7 @@ Component.prototype.extend = function() {
       c = c.prototype;
     }
     if (c.compSetup != null) {
-      c.compSetup.apply(this);
+      c.compSetup();
     }
     _results.push((function() {
       var _results;
@@ -47,8 +47,5 @@ $C = function() {
   return F;
 };
 if ((typeof module != "undefined" && module !== null ? module.exports : void 0) != null) {
-  module.exports = {
-    Component: Component,
-    $C: $C
-  };
+  module.exports = $C;
 }

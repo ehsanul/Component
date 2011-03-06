@@ -1,4 +1,4 @@
-$C = require('./component-core').$C
+$C = require('./component-core')
 
 # CMan is a component manager, which really just provides a few helper
 # functions that enable $G below, which automagically makes objects made with
@@ -104,6 +104,4 @@ $G = (components...)->
 $G.baseObject = {}
 
 if module?.exports?
-  module.exports =
-    CMan: CMan
-    $G: $G
+  module.exports = $G
