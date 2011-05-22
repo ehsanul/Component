@@ -80,6 +80,16 @@ vows.describe('Component Extra').addBatch({
       'gets a generated init': function(obj) {
         return assert.isTrue(obj.f.prototype.init._generated);
       }
+    },
+    'with compInit': {
+      topic: new ($G({
+        compInit: function() {
+          return this.compInitx = 99;
+        }
+      })),
+      'runs compInit': function(obj) {
+        return assert.equal(obj.compInitx, 99);
+      }
     }
   }
 })["export"](module);

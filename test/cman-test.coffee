@@ -45,6 +45,11 @@ vows.describe('Component Extra').addBatch(
       'gets a generated init': (obj)->
         assert.isTrue(obj.f::init._generated)
 
+     'with compInit':
+       topic: new($G compInit:-> @compInitx = 99)
+       'runs compInit': (obj)->
+         assert.equal(obj.compInitx, 99)
+
     #TODO:
     # - baseObject test
     # - compInit test
