@@ -35,16 +35,16 @@ CMan = {
     return Math.round(1000000 * Math.random());
   },
   /*
-    Generates a function that will be run when a component is used to
-    create other components. Now this function just adds to a list of lookup
-    structures, accumulating them as multiple components call their own
-    compSetup functions. This way, an object made of many components will
-    have the full list of relevant lookup structures. Then genInit makes it
-    automatically add itself to all relevant lookup structures.
-
-    EDIT: it also accumulates compInit functions, which are run when an object
-    which uses the corresponding components is created via the `new` keyword
-  */
+      Generates a function that will be run when a component is used to
+      create other components. Now this function just adds to a list of lookup
+      structures, accumulating them as multiple components call their own
+      compSetup functions. This way, an object made of many components will
+      have the full list of relevant lookup structures. Then genInit makes it
+      automatically add itself to all relevant lookup structures.
+  
+      EDIT: it also accumulates compInit functions, which are run when an object
+      which uses the corresponding components is created via the `new` keyword
+    */
   genCompSetup: function(opts) {
     return function() {
       var c, l, _i, _j, _len, _len2, _ref, _ref2, _results;
@@ -87,19 +87,19 @@ $G = function() {
     c = components[_i];
     if ((c.lookup != null) || (c._lookup != null) || (c.compInit != null) || (c._compInit != null)) {
       /*
-        Normally, properties defined in multiple components are overwritten,
-        with the latter components taking precendence, not accumulated.
-        But we want accumulation in the case of component initialization
-        when we have multiple components in one object. Hence this construct.
-        If a lookup property exists, we use it to generate a compSetup
-        function and delete the lookup property.
-
-        The generated compSetup will add back the property in the context
-        of the final object, but taking into account other lookups from
-        other components and accumulating them in _lookup.
-        The same is done for compInit, accumulated in _compInit.
-        _lookup and _compinit are used in CMan.genInit
-      */
+              Normally, properties defined in multiple components are overwritten,
+              with the latter components taking precendence, not accumulated.
+              But we want accumulation in the case of component initialization
+              when we have multiple components in one object. Hence this construct.
+              If a lookup property exists, we use it to generate a compSetup
+              function and delete the lookup property.
+      
+              The generated compSetup will add back the property in the context
+              of the final object, but taking into account other lookups from
+              other components and accumulating them in _lookup.
+              The same is done for compInit, accumulated in _compInit.
+              _lookup and _compinit are used in CMan.genInit
+            */
       lookup = (_ref = c._lookup) != null ? _ref : [];
       if (c.lookup != null) {
         lookup.push(c.lookup);
@@ -129,6 +129,6 @@ $G = function() {
   return $C.apply(null, [arguments.callee.baseObject].concat(__slice.call(components)));
 };
 $G.baseObject = {};
-if ((typeof module != "undefined" && module !== null ? module.exports : void 0) != null) {
+if ((typeof module !== "undefined" && module !== null ? module.exports : void 0) != null) {
   module.exports = $G;
 }
