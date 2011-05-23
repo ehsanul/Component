@@ -1,7 +1,16 @@
-var $G, assert, vows;
+var $G, assert, testArray, testArray2, testArray3, testObj, testObj2, vows;
 vows = require('vows');
 assert = require('assert');
 $G = require('../').$G;
+testArray = [1];
+testArray2 = [2];
+testArray3 = [3];
+testObj = {
+  'one': true
+};
+testObj2 = {
+  'two': true
+};
 vows.describe('Component Extra').addBatch({
   'A pimped-out component object': {
     'acts like a normal one, so': {
@@ -89,6 +98,51 @@ vows.describe('Component Extra').addBatch({
       })),
       'runs compInit': function(obj) {
         return assert.equal(obj.compInitx, 99);
+      }
+    },
+    'with lookup array': {
+      topic: new ($G({
+        lookup: testArray,
+        lookupx: 1
+      })),
+      'adds to lookup array': function(obj) {
+        return assert.equal(obj, testArray.pop());
+      }
+    },
+    'with multiple lookup arrays': {
+      topic: new ($G({
+        lookup: testArray2,
+        lookupx: 1
+      }, {
+        lookup: testArray3
+      })),
+      'adds to all lookup arrays': function(obj) {
+        assert.equal(obj, testArray2.pop());
+        return assert.equal(obj, testArray3.pop());
+      }
+    },
+    'with lookup object': {
+      topic: new ($G({
+        lookup: testObj,
+        lookupx: 1
+      })),
+      'adds to lookup array': function(obj) {
+        assert.equal(obj, testObj[obj.id]);
+        return delete testObj[obj.id];
+      }
+    },
+    'with multiple lookup objects': {
+      topic: new ($G({
+        lookup: testObj,
+        lookupx: 1
+      }, {
+        lookup: testObj2
+      })),
+      'adds to all lookup objects': function(obj) {
+        assert.equal(obj, testObj[obj.id]);
+        assert.equal(obj, testObj2[obj.id]);
+        delete testObj[obj.id];
+        return delete testObj2[obj.id];
       }
     }
   }

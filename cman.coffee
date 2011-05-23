@@ -19,7 +19,7 @@ CMan =
       if @_compInit?
         for c in @_compInit
           c.apply(this)
-      func.apply(this, args)
+      func?.apply(this, args)
     init._generated = true
     return init
 
@@ -46,7 +46,7 @@ CMan =
           for l in opts.lookup
             # ignore repeated lookupStructures, in case components are repeated.
             # ie, push only if @_lookup doesn't already have it
-            @_lookup.push(l) if @_lookup.indexOf(l) == -1
+            @_lookup.push(l) unless l in @_lookup #if @_lookup.indexOf(l) == -1
         else
           @_lookup = opts.lookup
       if opts.oldCompSetup?
@@ -54,7 +54,7 @@ CMan =
       if opts.compInit?
         if @_compInit?
           for c in opts.compInit
-            @_compInit.push(c) if @_compInit.indexOf(c) == -1
+            @_compInit.push(c) unless c in @_compInit #if @_compInit.indexOf(c) == -1
         else
           @_compInit = opts.compInit
 
@@ -80,10 +80,12 @@ $G = (components...)->
       lookup = c._lookup ? []
       lookup.push(c.lookup) if c.lookup?
       delete c.lookup
+      delete c._lookup
 
       compInit = c._compInit ? []
       compInit.push(c.compInit) if c.compInit?
       delete c.compInit
+      delete c._compInit
 
       oldCompSetup = c.compSetup
       delete c.compSetup
@@ -96,8 +98,10 @@ $G = (components...)->
    
     if c.init? && typeof c.init == 'function'
       c.init = CMan.genInit(c.init) unless c.init._generated?
+    else if c.init?  && typeof c.init != 'function'
+      throw new TypeError "'init' property should be a function, but got:\n#{c.init}"
     else
-      c.init = CMan.genInit( -> )
+      c.init = CMan.genInit()
 
   $C(arguments.callee.baseObject, components...)
 

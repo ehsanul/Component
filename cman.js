@@ -1,5 +1,10 @@
 var $C, $G, CMan;
-var __slice = Array.prototype.slice;
+var __slice = Array.prototype.slice, __indexOf = Array.prototype.indexOf || function(item) {
+  for (var i = 0, l = this.length; i < l; i++) {
+    if (this[i] === item) return i;
+  }
+  return -1;
+};
 $C = require('./component-core');
 CMan = {
   genInit: function(func) {
@@ -26,7 +31,7 @@ CMan = {
           c.apply(this);
         }
       }
-      return func.apply(this, args);
+      return func != null ? func.apply(this, args) : void 0;
     };
     init._generated = true;
     return init;
@@ -53,7 +58,7 @@ CMan = {
           _ref = opts.lookup;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             l = _ref[_i];
-            if (this._lookup.indexOf(l) === -1) {
+            if (__indexOf.call(this._lookup, l) < 0) {
               this._lookup.push(l);
             }
           }
@@ -70,7 +75,7 @@ CMan = {
           _results = [];
           for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
             c = _ref2[_j];
-            _results.push(this._compInit.indexOf(c) === -1 ? this._compInit.push(c) : void 0);
+            _results.push(__indexOf.call(this._compInit, c) < 0 ? this._compInit.push(c) : void 0);
           }
           return _results;
         } else {
@@ -105,11 +110,13 @@ $G = function() {
         lookup.push(c.lookup);
       }
       delete c.lookup;
+      delete c._lookup;
       compInit = (_ref2 = c._compInit) != null ? _ref2 : [];
       if (c.compInit != null) {
         compInit.push(c.compInit);
       }
       delete c.compInit;
+      delete c._compInit;
       oldCompSetup = c.compSetup;
       delete c.compSetup;
       c.compSetup = CMan.genCompSetup({
@@ -122,8 +129,10 @@ $G = function() {
       if (c.init._generated == null) {
         c.init = CMan.genInit(c.init);
       }
+    } else if ((c.init != null) && typeof c.init !== 'function') {
+      throw new TypeError("'init' property should be a function, but got:\n" + c.init);
     } else {
-      c.init = CMan.genInit(function() {});
+      c.init = CMan.genInit();
     }
   }
   return $C.apply(null, [arguments.callee.baseObject].concat(__slice.call(components)));

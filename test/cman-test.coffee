@@ -1,6 +1,18 @@
+#TODO:
+# - baseObject test
+# - multiple compInit test
+# - inherited compInit test
+# - multiple/inherited compInit/lookup test
+
 vows = require('vows')
 assert = require('assert')
 $G = require('../').$G
+
+testArray = [1]
+testArray2 = [2]
+testArray3 = [3]
+testObj = {'one': true}
+testObj2 = {'two': true}
 
 vows.describe('Component Extra').addBatch(
 
@@ -50,11 +62,30 @@ vows.describe('Component Extra').addBatch(
        'runs compInit': (obj)->
          assert.equal(obj.compInitx, 99)
 
-    #TODO:
-    # - baseObject test
-    # - compInit test
-    # - lookup test (array and object)
-    # - multiple/inherited compInit/lookup test
+     'with lookup array':
+       topic: new($G lookup: testArray, lookupx: 1)
+       'adds to lookup array': (obj)->
+         assert.equal(obj, testArray.pop())
+
+     'with multiple lookup arrays':
+       topic: new($G {lookup: testArray2, lookupx:1}, {lookup: testArray3})
+       'adds to all lookup arrays': (obj)->
+         assert.equal obj, testArray2.pop()
+         assert.equal obj, testArray3.pop()
+
+     'with lookup object':
+       topic: new($G lookup: testObj, lookupx: 1)
+       'adds to lookup array': (obj)->
+         assert.equal(obj, testObj[obj.id])
+         delete testObj[obj.id]
+
+     'with multiple lookup objects':
+       topic: new($G {lookup: testObj, lookupx: 1},{lookup: testObj2})
+       'adds to all lookup objects': (obj)->
+         assert.equal(obj, testObj[obj.id])
+         assert.equal(obj, testObj2[obj.id])
+         delete testObj[obj.id]
+         delete testObj2[obj.id]
 
 ).export(module)
 

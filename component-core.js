@@ -2,7 +2,7 @@ var $C, ComponentBase;
 var __slice = Array.prototype.slice;
 ComponentBase = function() {};
 ComponentBase.prototype.extend = function() {
-  var c, components, key, old, val, _i, _len, _results;
+  var c, components, key, old, val, _i, _len, _ref, _results;
   components = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
   _results = [];
   for (_i = 0, _len = components.length; _i < _len; _i++) {
@@ -10,15 +10,16 @@ ComponentBase.prototype.extend = function() {
     if (c.prototype != null) {
       c = c.prototype;
     }
-    if (c.compSetup != null) {
-      c.compSetup();
+    if ((_ref = c.compSetup) != null) {
+      _ref.apply(this);
     }
+    delete c.compSetup;
     _results.push((function() {
       var _results2;
       _results2 = [];
       for (key in c) {
         val = c[key];
-        _results2.push(this[key] ? (old = this[key], this[key] = val, this[key]["super"] = old) : key !== 'compSetup' ? this[key] = val : void 0);
+        _results2.push((this[key] != null) && typeof val === 'function' && !/extend|super|init/.test(key) ? (old = this[key], this[key] = val, this[key]["super"] = old) : this[key] = val);
       }
       return _results2;
     }).call(this));
@@ -34,7 +35,7 @@ $C = function() {
   comp = new ComponentBase;
   comp.extend.apply(comp, components);
   F = function() {
-    if (this.init != null) {
+    if (typeof this.init === "function") {
       this.init.apply(this, arguments);
     }
     return null;
