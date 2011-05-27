@@ -1,4 +1,4 @@
-var $C, $G, CMan;
+var $C, $G, CMan, _;
 var __slice = Array.prototype.slice, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __indexOf = Array.prototype.indexOf || function(item) {
   for (var i = 0, l = this.length; i < l; i++) {
     if (this[i] === item) return i;
@@ -6,6 +6,7 @@ var __slice = Array.prototype.slice, __bind = function(fn, me){ return function(
   return -1;
 };
 $C = require('./component-core');
+_ = require('underscore');
 CMan = {
   genInit: function(func) {
     var init;
@@ -39,7 +40,7 @@ CMan = {
   genRemove: function(func) {
     var remove;
     return remove = function() {
-      var args, i, lookup, newLookup, _len, _ref;
+      var args, i, lookup, newLookup, obj, _i, _len, _len2, _ref;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (this._lookup != null) {
         _ref = this._lookup;
@@ -49,7 +50,10 @@ CMan = {
             newLookup = lookup.splice(0, lookup.length).filter(__bind(function(obj) {
               return obj.id !== this.id;
             }, this));
-            lookup.concat(newLookup);
+            for (_i = 0, _len2 = newLookup.length; _i < _len2; _i++) {
+              obj = newLookup[_i];
+              lookup.push(obj);
+            }
           } else {
             delete lookup[this.id];
           }

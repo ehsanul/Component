@@ -3,6 +3,7 @@
 # - refactor
 
 $C = require('./component-core')
+_  = require('underscore')
 
 # CMan is a component manager, which really just provides a few helper
 # functions that enable $G below, which automagically makes objects made with
@@ -37,7 +38,8 @@ CMan =
           if lookup instanceof Array
             newLookup = lookup.splice(0, lookup.length).filter (obj)=>
               obj.id != @id
-            lookup.concat(newLookup)
+            for obj in newLookup
+              lookup.push(obj)
           else
             delete lookup[@id]
       func?.apply(this, args)
