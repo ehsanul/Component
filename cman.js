@@ -1,5 +1,5 @@
 var $C, $G, CMan;
-var __slice = Array.prototype.slice, __indexOf = Array.prototype.indexOf || function(item) {
+var __slice = Array.prototype.slice, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __indexOf = Array.prototype.indexOf || function(item) {
   for (var i = 0, l = this.length; i < l; i++) {
     if (this[i] === item) return i;
   }
@@ -39,20 +39,17 @@ CMan = {
   genRemove: function(func) {
     var remove;
     return remove = function() {
-      var args, i, lookup, obj, _i, _len, _len2, _ref;
+      var args, i, lookup, newLookup, _len, _ref;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (this._lookup != null) {
         _ref = this._lookup;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          lookup = _ref[_i];
+        for (i = 0, _len = _ref.length; i < _len; i++) {
+          lookup = _ref[i];
           if (lookup instanceof Array) {
-            console.log('');
-            for (i = 0, _len2 = lookup.length; i < _len2; i++) {
-              obj = lookup[i];
-              if (obj.id === this.id) {
-                lookup[i] = null;
-              }
-            }
+            newLookup = lookup.splice(0, lookup.length).filter(__bind(function(obj) {
+              return obj.id !== this.id;
+            }, this));
+            lookup.concat(newLookup);
           } else {
             delete lookup[this.id];
           }

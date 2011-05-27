@@ -31,12 +31,13 @@ CMan =
   genRemove: (func)->
     remove = (args...)->
       if @_lookup?
-        for lookup in @_lookup
+        #TODO binary search tree or sorted array instead of plain array
+        #     for faster removals - consider tradeoffs?
+        for lookup, i in @_lookup
           if lookup instanceof Array
-            #TODO binary search tree or sorted array instead of plain array
-            console.log ''
-            for obj, i in lookup
-              lookup[i] = null if obj.id == @id
+            newLookup = lookup.splice(0, lookup.length).filter (obj)=>
+              obj.id != @id
+            lookup.concat(newLookup)
           else
             delete lookup[@id]
       func?.apply(this, args)

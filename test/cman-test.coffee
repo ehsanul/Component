@@ -66,10 +66,9 @@ vows.describe('Component Extra').addBatch(
        topic: new($G lookup: testArray, lookupx: 1)
        'adds to lookup array': (obj)->
          assert.equal(obj, testArray[testArray.length-1])
-         assert.isNotNull(testArray[testArray.length-1])
        "can remove itself from the lookup array": (obj)->
          obj.remove()
-         assert.isNull(testArray[testArray.length-1])
+         assert.notEqual(obj, testArray[testArray.length-1])
 
      'with multiple lookup arrays':
        topic: new($G {lookup: testArray2, lookupx:1}, {lookup: testArray3})
@@ -78,8 +77,8 @@ vows.describe('Component Extra').addBatch(
          assert.equal(obj, testArray3[testArray3.length-1])
        "can remove itself from all lookup arrays": (obj)->
          obj.remove()
-         assert.isNull(testArray2[testArray2.length-1])
-         assert.isNull(testArray3[testArray3.length-1])
+         assert.notEqual(obj, testArray2[testArray2.length-1])
+         assert.notEqual(obj, testArray3[testArray3.length-1])
 
      'with lookup object':
        topic: new($G lookup: testObj, lookupx: 1)

@@ -106,12 +106,11 @@ vows.describe('Component Extra').addBatch({
         lookupx: 1
       })),
       'adds to lookup array': function(obj) {
-        assert.equal(obj, testArray[testArray.length - 1]);
-        return assert.isNotNull(testArray[testArray.length - 1]);
+        return assert.equal(obj, testArray[testArray.length - 1]);
       },
       "can remove itself from the lookup array": function(obj) {
         obj.remove();
-        return assert.isNull(testArray[testArray.length - 1]);
+        return assert.notEqual(obj, testArray[testArray.length - 1]);
       }
     },
     'with multiple lookup arrays': {
@@ -127,8 +126,8 @@ vows.describe('Component Extra').addBatch({
       },
       "can remove itself from all lookup arrays": function(obj) {
         obj.remove();
-        assert.isNull(testArray2[testArray2.length - 1]);
-        return assert.isNull(testArray3[testArray3.length - 1]);
+        assert.notEqual(obj, testArray2[testArray2.length - 1]);
+        return assert.notEqual(obj, testArray3[testArray3.length - 1]);
       }
     },
     'with lookup object': {
