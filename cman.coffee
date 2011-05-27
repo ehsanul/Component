@@ -1,3 +1,7 @@
+#TODO
+# - remove _lookup and _compinit, replace tihe lookup._generated, see note
+# - refactor
+
 $C = require('./component-core')
 
 # CMan is a component manager, which really just provides a few helper
@@ -13,7 +17,7 @@ CMan =
       if @_lookup?
         for lookup in @_lookup
           if lookup instanceof Array
-            lookup.push(this)
+            lookup.push this
           else
             lookup[@id] = this
       if @_compInit?
@@ -22,6 +26,20 @@ CMan =
       func?.apply(this, args)
     init._generated = true
     return init
+
+  #TODO finish!
+  genRemove: (func)->
+    remove = (args...)->
+      if @_lookup?
+        for lookup in @_lookup
+          if lookup instanceof Array
+            #TODO binary search tree or sorted array instead of plain array
+            console.log ''
+            for obj, i in lookup
+              lookup[i] = null if obj.id == @id
+          else
+            delete lookup[@id]
+      func?.apply(this, args)
 
   #TODO: make this a real GUID function
   genGUID: ->
@@ -80,7 +98,9 @@ $G = (components...)->
       lookup = c._lookup ? []
       lookup.push(c.lookup) if c.lookup?
       delete c.lookup
-      delete c._lookup
+      delete c._lookup 
+      #^ note: _lookup exists to easily differentiate b/w a user-provided
+      #        lookup array and a (generated) array of lookup arrays 
 
       compInit = c._compInit ? []
       compInit.push(c.compInit) if c.compInit?
@@ -90,6 +110,11 @@ $G = (components...)->
       oldCompSetup = c.compSetup
       delete c.compSetup
 
+      #TODO: refactor this to just add a new object at the end of the call to $C
+      # to simply how this all works. fewer high order procedures will make this
+      # code more maintainable. the new object will simply included the
+      # generated init, as well os the generated @_compInit and @_lookup arrays.
+      # then genCompSetup will no longer be required
       c.compSetup = CMan.genCompSetup(
         lookup: lookup
         compInit: compInit
@@ -102,6 +127,13 @@ $G = (components...)->
       throw new TypeError "'init' property should be a function, but got:\n#{c.init}"
     else
       c.init = CMan.genInit()
+
+    if c.remove? && typeof c.remove == 'function'
+      c.remove = CMan.genRemove(c.remove) unless c.remove._generated?
+    else if c.remove?  && typeof c.remove != 'function'
+      throw new TypeError "'remove' property should be a function, but got:\n#{c.remove}"
+    else
+      c.remove = CMan.genRemove()
 
   $C(arguments.callee.baseObject, components...)
 

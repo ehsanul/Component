@@ -65,27 +65,42 @@ vows.describe('Component Extra').addBatch(
      'with lookup array':
        topic: new($G lookup: testArray, lookupx: 1)
        'adds to lookup array': (obj)->
-         assert.equal(obj, testArray.pop())
+         assert.equal(obj, testArray[testArray.length-1])
+         assert.isNotNull(testArray[testArray.length-1])
+       "can remove itself from the lookup array": (obj)->
+         obj.remove()
+         assert.isNull(testArray[testArray.length-1])
 
      'with multiple lookup arrays':
        topic: new($G {lookup: testArray2, lookupx:1}, {lookup: testArray3})
        'adds to all lookup arrays': (obj)->
-         assert.equal obj, testArray2.pop()
-         assert.equal obj, testArray3.pop()
+         assert.equal(obj, testArray2[testArray2.length-1])
+         assert.equal(obj, testArray3[testArray3.length-1])
+       "can remove itself from all lookup arrays": (obj)->
+         obj.remove()
+         assert.isNull(testArray2[testArray2.length-1])
+         assert.isNull(testArray3[testArray3.length-1])
 
      'with lookup object':
        topic: new($G lookup: testObj, lookupx: 1)
        'adds to lookup array': (obj)->
          assert.equal(obj, testObj[obj.id])
-         delete testObj[obj.id]
+       'can remove itself from the lookup object': (obj)->
+         assert.isNotNull(testObj[obj.id])
+         obj.remove()
+         assert.isUndefined(testObj[obj.id])
 
      'with multiple lookup objects':
        topic: new($G {lookup: testObj, lookupx: 1},{lookup: testObj2})
        'adds to all lookup objects': (obj)->
          assert.equal(obj, testObj[obj.id])
          assert.equal(obj, testObj2[obj.id])
-         delete testObj[obj.id]
-         delete testObj2[obj.id]
+       'can remove itself from all lookup objects': (obj)->
+         assert.isNotNull(testObj[obj.id])
+         assert.isNotNull(testObj2[obj.id])
+         obj.remove()
+         assert.isUndefined(testObj[obj.id])
+         assert.isUndefined(testObj2[obj.id])
 
 ).export(module)
 

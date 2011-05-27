@@ -106,7 +106,12 @@ vows.describe('Component Extra').addBatch({
         lookupx: 1
       })),
       'adds to lookup array': function(obj) {
-        return assert.equal(obj, testArray.pop());
+        assert.equal(obj, testArray[testArray.length - 1]);
+        return assert.isNotNull(testArray[testArray.length - 1]);
+      },
+      "can remove itself from the lookup array": function(obj) {
+        obj.remove();
+        return assert.isNull(testArray[testArray.length - 1]);
       }
     },
     'with multiple lookup arrays': {
@@ -117,8 +122,13 @@ vows.describe('Component Extra').addBatch({
         lookup: testArray3
       })),
       'adds to all lookup arrays': function(obj) {
-        assert.equal(obj, testArray2.pop());
-        return assert.equal(obj, testArray3.pop());
+        assert.equal(obj, testArray2[testArray2.length - 1]);
+        return assert.equal(obj, testArray3[testArray3.length - 1]);
+      },
+      "can remove itself from all lookup arrays": function(obj) {
+        obj.remove();
+        assert.isNull(testArray2[testArray2.length - 1]);
+        return assert.isNull(testArray3[testArray3.length - 1]);
       }
     },
     'with lookup object': {
@@ -127,8 +137,12 @@ vows.describe('Component Extra').addBatch({
         lookupx: 1
       })),
       'adds to lookup array': function(obj) {
-        assert.equal(obj, testObj[obj.id]);
-        return delete testObj[obj.id];
+        return assert.equal(obj, testObj[obj.id]);
+      },
+      'can remove itself from the lookup object': function(obj) {
+        assert.isNotNull(testObj[obj.id]);
+        obj.remove();
+        return assert.isUndefined(testObj[obj.id]);
       }
     },
     'with multiple lookup objects': {
@@ -140,9 +154,14 @@ vows.describe('Component Extra').addBatch({
       })),
       'adds to all lookup objects': function(obj) {
         assert.equal(obj, testObj[obj.id]);
-        assert.equal(obj, testObj2[obj.id]);
-        delete testObj[obj.id];
-        return delete testObj2[obj.id];
+        return assert.equal(obj, testObj2[obj.id]);
+      },
+      'can remove itself from all lookup objects': function(obj) {
+        assert.isNotNull(testObj[obj.id]);
+        assert.isNotNull(testObj2[obj.id]);
+        obj.remove();
+        assert.isUndefined(testObj[obj.id]);
+        return assert.isUndefined(testObj2[obj.id]);
       }
     }
   }

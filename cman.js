@@ -36,6 +36,31 @@ CMan = {
     init._generated = true;
     return init;
   },
+  genRemove: function(func) {
+    var remove;
+    return remove = function() {
+      var args, i, lookup, obj, _i, _len, _len2, _ref;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (this._lookup != null) {
+        _ref = this._lookup;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          lookup = _ref[_i];
+          if (lookup instanceof Array) {
+            console.log('');
+            for (i = 0, _len2 = lookup.length; i < _len2; i++) {
+              obj = lookup[i];
+              if (obj.id === this.id) {
+                lookup[i] = null;
+              }
+            }
+          } else {
+            delete lookup[this.id];
+          }
+        }
+      }
+      return func != null ? func.apply(this, args) : void 0;
+    };
+  },
   genGUID: function() {
     return Math.round(1000000 * Math.random());
   },
@@ -133,6 +158,15 @@ $G = function() {
       throw new TypeError("'init' property should be a function, but got:\n" + c.init);
     } else {
       c.init = CMan.genInit();
+    }
+    if ((c.remove != null) && typeof c.remove === 'function') {
+      if (c.remove._generated == null) {
+        c.remove = CMan.genRemove(c.remove);
+      }
+    } else if ((c.remove != null) && typeof c.remove !== 'function') {
+      throw new TypeError("'remove' property should be a function, but got:\n" + c.remove);
+    } else {
+      c.remove = CMan.genRemove();
     }
   }
   return $C.apply(null, [arguments.callee.baseObject].concat(__slice.call(components)));
