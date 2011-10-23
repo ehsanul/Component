@@ -2,16 +2,14 @@ var $C, ComponentBase;
 var __slice = Array.prototype.slice;
 ComponentBase = function() {};
 ComponentBase.prototype.extend = function() {
-  var c, components, key, old, val, _i, _len, _ref, _results;
+  var c, components, key, old, val, _i, _len, _ref, _ref2, _results;
   components = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
   _results = [];
   for (_i = 0, _len = components.length; _i < _len; _i++) {
     c = components[_i];
-    if (c.prototype != null) {
-      c = c.prototype;
-    }
-    if ((_ref = c.compSetup) != null) {
-      _ref.apply(this);
+    c = (_ref = c.prototype) != null ? _ref : c;
+    if ((_ref2 = c.compSetup) != null) {
+      _ref2.apply(this);
     }
     delete c.compSetup;
     _results.push((function() {
@@ -19,7 +17,10 @@ ComponentBase.prototype.extend = function() {
       _results2 = [];
       for (key in c) {
         val = c[key];
-        _results2.push((this[key] != null) && typeof val === 'function' && !/extend|super|init/.test(key) ? (old = this[key], this[key] = val, this[key]["super"] = old) : this[key] = val);
+        if (!c.hasOwnProperty(key)) {
+          continue;
+        }
+        _results2.push(typeof val === 'function' && !/extend|super/.test(key) ? (old = this[key], this[key] = val, this[key]["super"] = old) : this[key] = val);
       }
       return _results2;
     }).call(this));
@@ -29,23 +30,18 @@ ComponentBase.prototype.extend = function() {
 ComponentBase.prototype["super"] = function() {
   return this["super"].caller["super"].apply(this, arguments);
 };
-$C = function() {
-  var F, comp, components;
+component = function() {
+  var F, comp, components, _ref;
   components = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
   comp = new ComponentBase;
   comp.extend.apply(comp, components);
-  F = function() {
-    if (typeof this.init === "function") {
-      this.init.apply(this, arguments);
-    }
-    return null;
-  };
+  F = (_ref = comp.init) != null ? _ref : function() {};
   F.prototype = comp;
   F.extend = function() {
-    return ComponentBase.prototype.extend.apply(F.prototype, arguments);
+    return ComponentBase.prototype.extend.apply(F, arguments);
   };
   return F;
 };
 if ((typeof module !== "undefined" && module !== null ? module.exports : void 0) != null) {
-  module.exports = $C;
+  module.exports = component;
 }
