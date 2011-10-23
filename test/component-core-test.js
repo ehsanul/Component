@@ -1,15 +1,15 @@
 var $C, assert, vows;
 vows = require('vows');
 assert = require('assert');
-$C = require('../').$C;
+$C = require('../component-core');
 vows.describe('Component Core').addBatch({
   'A component object': {
     topic: new ($C()),
     'can be extended': function(obj) {
       obj.extend({
-        omg: 'wth'
+        x: 0
       });
-      return assert.equal(obj.omg, 'wth');
+      return assert.equal(obj.x, 0);
     },
     'with init': {
       topic: new ($C({
@@ -33,9 +33,15 @@ vows.describe('Component Core').addBatch({
     },
     'with multiple sub-objects': {
       topic: new ($C({
+        a: function() {
+          return 9;
+        },
         x: 2,
         y: 2
       }, {
+        a: function() {
+          return 1 + this["super"]();
+        },
         x: 1,
         z: 3
       })),
@@ -43,8 +49,11 @@ vows.describe('Component Core').addBatch({
         assert.equal(obj.y, 2);
         return assert.equal(obj.z, 3);
       },
-      'overwrites properties which are repeated': function(obj) {
+      'overwrites repeated properties': function(obj) {
         return assert.equal(obj.x, 1);
+      },
+      'has a working @super': function(obj) {
+        return assert.equal(obj.a(), 10);
       }
     },
     'built from a sub-component': {
