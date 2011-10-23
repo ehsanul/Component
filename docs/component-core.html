@@ -187,20 +187,19 @@ me.render();             // Rendering at (12, 13)!
            constructor with an <code>init</code> property, like so:</p>
 
 <pre><code> MyComponent = component({
-   x: 1,
-   init: function(){ this.y = 2 }
+   init: function(){ this.x = 2 }
  })
  myInstance = new MyComponent
- myInstance.x + myInstance.y == 3
+ myInstance.x == 2
 </code></pre>
 
 <p>Note that instances of components have built-in <code>extend</code> and <code>super</code> methods.
 The documentation for these functions is at <code>ComponentBase</code>. But here's an
 example, continuing from the above example:</p>
 
-<pre><code> myInstance.extend({z: function(){return 2}})
- myInstance.extend({z: function(){return 3 + @super()})
- myInstance.z() == 5
+<pre><code> myInstance.extend({y: function(){ return 2 }})
+ myInstance.extend({y: function(){ return 3 + this.super() })
+ myInstance.y() == 5
 </code></pre>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">component = </span><span class="nf">(components...)-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Create a base object to serve as the returned component's prototype</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">comp = </span><span class="k">new</span> <span class="nx">ComponentBase</span>
   <span class="nx">comp</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">components</span><span class="p">...</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>A constructor function is returned as the component, ensuring that
 object instantiation from the component is fast via <code>new</code>.

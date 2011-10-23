@@ -208,19 +208,18 @@
 #            constructor with an `init` property, like so:
 #
 #      MyComponent = component({
-#        x: 1,
-#        init: function(){ this.y = 2 }
+#        init: function(){ this.x = 2 }
 #      })
 #      myInstance = new MyComponent
-#      myInstance.x + myInstance.y == 3
+#      myInstance.x == 2
 #
 # Note that instances of components have built-in `extend` and `super` methods.
 # The documentation for these functions is at `ComponentBase`. But here's an
 # example, continuing from the above example:
 #
-#      myInstance.extend({z: function(){return 2}})
-#      myInstance.extend({z: function(){return 3 + @super()})
-#      myInstance.z() == 5
+#      myInstance.extend({y: function(){ return 2 }})
+#      myInstance.extend({y: function(){ return 3 + this.super() })
+#      myInstance.y() == 5
 component = (components...)->
 
   # Create a base object to serve as the returned component's prototype
