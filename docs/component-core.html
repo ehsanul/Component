@@ -1,0 +1,234 @@
+<!DOCTYPE html>  <html> <head>   <title>component-core.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">        <link rel="stylesheet" media="all" href="docco.css" />    </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               component-core.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Component.coffee is a minimal library for when classical inheritence isn't
+enough. Components may be known to you as <em>traits</em>, or <em>mixins</em>, or something
+else. Multiple inheritance, like in Python, is also somewhat similar.</p>
+
+<p>The idea is to make your <em>code</em> conform to the problem space, instead of trying
+to shoehorn the problem into some design pattern. Here's a concrete example.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h3>Classical Inheritance</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>You're making a game. The class structure, using classical inheritance is
+shown below (arrows denote a parent→child relationship). You have objects
+which respond to gravity, like the player. You also have bullets, which
+kill, but don't respond to gravity. Bullet and Player share common code
+related to rendering and position, and everything is amazing.</p>
+
+<pre><code>                    +-----------+    +------------+
+                    | *Physics* |    |  *Player*  |
++----------+   +---&gt;|-----------+---&gt;|------------|
+|  *Base*  |   |    |  Gravity  |    |  Controls  |
+|----------|   |    +-----------+    |    Walk    |
+|  Render  +---+                     +------------+
+| Position |   |    +----------+
++----------+   |    | *Bullet* |
+               +---&gt;|----------|
+                    |   Kill   |
+                    +----------+
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Now you want to add missiles which respond to gravity. You could do this:</p>
+
+<pre><code>                    +-----------+    +------------+
+                    | *Physics* |    |  *Player*  |
++----------+   +---&gt;|-----------+---&gt;|------------|
+|  *Base*  |   |    |  Gravity  |    |  Controls  |
+|----------|   |    +-----------+    |    Walk    |
+|  Render  +---+                     +------------+
+| Position |   |    +----------+
++----------+   |    | *Weapon* |      +----------+
+               +---&gt;|----------|--+--&gt;| *Bullet* |
+                    |   Kill   |  |   +----------+
+                    +----------+  |
+                                  |   +-----------+
+                                  |   | *Missile* |
+                                  +--&gt;|-----------|
+                                      |  Gravity  |
+                                      +-----------+
+</code></pre>
+
+<p>Bullets and missiles can share the code for killing, awesome. But there's
+a glaring issue here though: <em>code for gravity is duplicated</em>. You probably
+copy-pasted it, didn't you? Now any changes to gravity have to be done in two
+places simultaneously, <em>yuck</em>.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>How about this?:</p>
+
+<pre><code>+----------+    +-----------+    +------------+
+|  *Base*  |    | *Physics* |    |  *Player*  |
+|----------+---&gt;|-----------+---&gt;|------------|
+|  Render  |    |  Gravity  |    |  Controls  |
+| Position |    +-----+-----+    |    Walk    |
++----------+          |          +------------+
+                      |
+                      v            +----------+
+                +----------+   +--&gt;| *Bullet* |
+                | *Weapon* |   |   +----------+
+                |----------|+--+
+                |   Kill   |   |   +-----------+
+                +----------+   +--&gt;| *Missile* |
+                                   +-----------+
+</code></pre>
+
+<p>Gravity isn't repeated, so it's good now, right? Except that bullets now have
+code related to gravity. This is workable if that gravity code is never
+called, but that's rather crufty. It's also makes the code harder to read,
+since inspecting the inheritance chain would have you believe that bullets do
+react to gravity.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <h3>Components</h3>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Let's see how using components solve this problem. The following diagram
+shows the same code, but using components instead of classical inheritance:</p>
+
+<pre><code>                +----------+    +-----+-----+
++----------+    |  *Base*  |    | *Physics* |
+| *Bullet* |&lt;---|----------|---&gt;+-----------|
++----------+    |  Render  |    |  Gravity  |
+     ^          | Position |    +-----+-----+
+     |          +----------+          |      
+     |                                | 
+     |                +---------------+ 
+     |                |               |
++----+-----+          v               v
+| *Weapon* |    +-----------+   +------------+
+|----------+---&gt;| *Missile* |   |  *Player*  |
+|   Kill   |    +-----------+   |------------|
++----------+                    |  Controls  |
+                                |    Walk    |
+                                +------------+
+</code></pre>
+
+<p>Physics includes Base functionality, as in classical inheritance. But now
+Missile borrows functionality from both the Physics and Weapon components.
+Bullets can take just the Base and Weapons components, without Physics, and
+Player needs to include only the Physics component.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Let's see what this looks like in code. JavaScript follows, but in
+<em>CoffeeScript</em>, this looks like:</p>
+
+<pre><code># This object literal becomes part of the prototype of
+# the final component, as for Physics/Weapon/Player.
+# So the usual caveats apply: mainly not putting per-
+# instance variables into the prototype chain.
+Base =
+  render: -&gt;
+    console.log "Rendering at (#{@x}, #{@y})!"
+  init: (@x = 0, @y = 0)-&gt;
+    console.log "@init() called"
+
+Physics = component Base,
+  gravity: (v = 1)-&gt; @y += v
+
+Weapon =
+  kill: (obj)-&gt;
+    delete GameObjects[obj.id]
+
+Missile = component Physics, Weapon
+Bullet = component Base, Weapon
+
+Player = component Physics,
+  walk: -&gt; @x += 2
+  gravity: -&gt;
+    console.log "Demonstrating super"
+    @super(3)
+  update: -&gt;
+    @walk()
+    @gravity()
+    @render()
+
+me = new Player(10,10)  # @init() called
+me.update()
+me.render()             # Rendering at (12, 13)!
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Or the same thing in <em>JavaScript</em>:</p>
+
+<pre><code>// This object literal becomes part of the prototype of
+// the final component, as for Physics/Weapon/Player.
+// So the usual caveats apply: mainly not putting per-
+// instance variables into the prototype chain.
+Base = {
+  render: function() {
+    console.log(
+      "Rendering at (" + this.x + ", " + this.y + ")!"
+    );
+  },
+  init: function(x, y) {
+    this.x = x != null ? x : 0;
+    this.y = y != null ? y : 0;
+    return console.log("this.init() called");
+  }
+};
+
+Physics = component(Base, {
+  gravity: function(v) {
+    v = (v != null) ? v : 1;
+    this.y += v;
+  }
+});
+
+Weapon = {
+  kill: function(obj) {
+    return delete GameObjects[obj.id];
+  }
+};
+
+Missile = component(Physics, Weapon);
+Bullet = component(Base, Weapon);
+
+Player = component(Physics, {
+  walk: function() {
+    return this.x += 2;
+  },
+  gravity: function() {
+    console.log("Demonstrating super");
+    this.super(3);
+  },
+  update: function() {
+    this.walk();
+    this.gravity();
+    this.render();
+  }
+});
+
+me = new Player(10, 10); // this.init() called
+me.update();
+me.render();             // Rendering at (12, 13)!
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <h1>Code</h1>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>This is the public interface to component.coffee.  </p>
+
+<p><em>Parameters</em>: Any number of object literals or components (constructors) <br />
+<em>Returns</em>: A component. This is just a constructor function with a prototype
+           made up of the given objects/components. Use this constructor
+           function with the <code>new</code> keyword as usual. You can set your own
+           constructor with an <code>init</code> property, like so:</p>
+
+<pre><code> MyComponent = component({
+   x: 1,
+   init: function(){ this.y = 2 }
+ })
+ myInstance = new MyComponent
+ myInstance.x + myInstance.y == 3
+</code></pre>
+
+<p>Note that instances of components have built-in <code>extend</code> and <code>super</code> methods.
+The documentation for these functions is at <code>ComponentBase</code>. But here's an
+example, continuing from the above example:</p>
+
+<pre><code> myInstance.extend({z: function(){return 2}})
+ myInstance.extend({z: function(){return 3 + @super()})
+ myInstance.z() == 5
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">component = </span><span class="nf">(components...)-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Create a base object to serve as the returned component's prototype</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">comp = </span><span class="k">new</span> <span class="nx">ComponentBase</span>
+  <span class="nx">comp</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">components</span><span class="p">...</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>A constructor function is returned as the component, ensuring that
+object instantiation from the component is fast via <code>new</code>.
+A user-defined <code>init</code> property is used as the constructor, if available.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">F = </span><span class="nx">comp</span><span class="p">.</span><span class="nx">init</span> <span class="o">?</span> <span class="o">-&gt;</span>
+  <span class="nv">F.prototype = </span><span class="nx">comp</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Give F the same extension interface as a <code>new MyComponent()</code></p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">F.extend = </span><span class="o">-&gt;</span> <span class="nx">ComponentBase</span><span class="o">::</span><span class="nx">extend</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">F</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">F</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Instances of <code>ComponentBase</code> serve as prototypes for components. This gives
+instances of components access to <code>@extend</code> and <code>@super</code> methods.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">ComponentBase = </span><span class="o">-&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p><code>extend</code> copies properties from the arguments passed in to <code>this</code>  </p>
+
+<p><em>Parameters</em>: Any number of object literals or components (constructors) <br />
+<em>Returns</em>: null</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">ComponentBase::extend = </span><span class="nf">(components...)-&gt;</span>
+  <span class="k">for</span> <span class="nx">c</span> <span class="k">in</span> <span class="nx">components</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Allows extension  using both object literals and other components. <br />
+Like this: <code>x = component(a:1); y = component(x, b:2)</code></p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">c = </span><span class="nx">c</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">?</span> <span class="nx">c</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Give components "extend-time" access, useful for accumulators etc.
+However, it's much simpler to just make a wrapper around <code>component</code></p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">c</span><span class="p">.</span><span class="nx">compSetup</span><span class="o">?</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="k">delete</span> <span class="nx">c</span><span class="p">.</span><span class="nx">compSetup</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Copy all key/value pairs from given object to <code>this</code>. Create a <code>super</code>
+property for functions that will be overwritten, except <code>extend</code>/<code>super</code></p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">for</span> <span class="nx">key</span><span class="p">,</span> <span class="nx">val</span> <span class="k">of</span> <span class="nx">c</span>
+      <span class="k">continue</span> <span class="nx">unless</span> <span class="nx">c</span><span class="p">.</span><span class="nx">hasOwnProperty</span> <span class="nx">key</span>
+      <span class="k">if</span> <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">and</span> <span class="k">typeof</span> <span class="nx">val</span> <span class="o">is</span> <span class="s1">&#39;function&#39;</span> <span class="o">and</span> <span class="o">not</span> <span class="sr">/extend|super/</span><span class="p">.</span><span class="nx">test</span> <span class="nx">key</span>
+        <span class="nv">old = </span><span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">].</span><span class="k">super</span> <span class="o">=</span> <span class="nx">old</span>
+      <span class="k">else</span>
+        <span class="k">this</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">val</span>
+  <span class="k">return</span> <span class="kc">null</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Use this by calling <code>this.super(arg1, arg2)</code> in a component's function.
+The corresponding function that it overwrote earlier will be called.  </p>
+
+<p><em>Parameters</em>: Arguments to be passed on <br />
+<em>Returns</em>: Whatever the overwritten function returns</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">ComponentBase::super = </span><span class="o">-&gt;</span>
+  <span class="nx">@super</span><span class="p">.</span><span class="nx">caller</span><span class="p">.</span><span class="k">super</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Export in case CommonJS is being used</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">if</span> <span class="nx">module</span><span class="o">?</span><span class="p">.</span><span class="nx">exports</span><span class="o">?</span>
+  <span class="nv">module.exports = </span><span class="nx">component</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
