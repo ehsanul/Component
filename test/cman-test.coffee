@@ -29,9 +29,13 @@ vows.describe('Component Extra').addBatch(
   'A pimped-out component object':
     'acts like a normal one, so':
       topic: new($G())
-      'can be extended': (obj)->
+      'can be extended with a property': (obj)->
         obj.extend(omg: 'wth')
         assert.equal(obj.omg, 'wth')
+
+      'can be extended with a function': (obj)->
+        obj.extend(sup: -> return 1 + 8)
+        assert.equal(obj.sup(), 9)
 
       'with init':
         topic: new($G init:-> @initx = 1)
@@ -52,10 +56,10 @@ vows.describe('Component Extra').addBatch(
           assert.equal(obj.x, 1)
 
       'built from a sub-component':
-        topic: new($G $G(x:1, y:2))
+        topic: new($G $G(x:1, y: -> @x + 8))
         'inherits the sub-component\'s properties': (obj)->
           assert.equal(obj.x, 1)
-          assert.equal(obj.y, 2)
+          assert.equal(obj.y(), 9)
 
     'without init':
       topic: {f:$G(init:->)}

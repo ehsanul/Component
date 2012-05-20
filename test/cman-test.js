@@ -32,11 +32,19 @@ vows.describe('Component Extra').addBatch({
   'A pimped-out component object': {
     'acts like a normal one, so': {
       topic: new ($G()),
-      'can be extended': function(obj) {
+      'can be extended with a property': function(obj) {
         obj.extend({
           omg: 'wth'
         });
         return assert.equal(obj.omg, 'wth');
+      },
+      'can be extended with a function': function(obj) {
+        obj.extend({
+          sup: function() {
+            return 1 + 8;
+          }
+        });
+        return assert.equal(obj.sup(), 9);
       },
       'with init': {
         topic: new ($G({
@@ -77,11 +85,13 @@ vows.describe('Component Extra').addBatch({
       'built from a sub-component': {
         topic: new ($G($G({
           x: 1,
-          y: 2
+          y: function() {
+            return this.x + 8;
+          }
         }))),
         'inherits the sub-component\'s properties': function(obj) {
           assert.equal(obj.x, 1);
-          return assert.equal(obj.y, 2);
+          return assert.equal(obj.y(), 9);
         }
       }
     },
