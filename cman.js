@@ -112,7 +112,7 @@ CMan = {
   }
 };
 $G = function() {
-  var c, compInit, components, lookup, oldCompSetup, _i, _len, _ref, _ref2;
+  var c, compInit, components, lookup, oldCompSetup, _i, _len, _ref, _ref2, _ref3, _ref4;
   components = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
   for (_i = 0, _len = components.length; _i < _len; _i++) {
     c = components[_i];
@@ -131,13 +131,13 @@ $G = function() {
               The same is done for compInit, accumulated in _compInit.
               _lookup and _compinit are used in CMan.genInit
             */
-      lookup = (_ref = c._lookup) != null ? _ref : [];
+      lookup = (_ref = (_ref2 = c._lookup) != null ? _ref2.slice(0) : void 0) != null ? _ref : [];
       if (c.lookup != null) {
         lookup.push(c.lookup);
       }
       delete c.lookup;
       delete c._lookup;
-      compInit = (_ref2 = c._compInit) != null ? _ref2 : [];
+      compInit = (_ref3 = (_ref4 = c._compInit) != null ? _ref4.slice(0) : void 0) != null ? _ref3 : [];
       if (c.compInit != null) {
         compInit.push(c.compInit);
       }

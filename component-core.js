@@ -1,5 +1,10 @@
 var ComponentBase, component;
-var __slice = Array.prototype.slice;
+var __slice = Array.prototype.slice, __indexOf = Array.prototype.indexOf || function(item) {
+  for (var i = 0, l = this.length; i < l; i++) {
+    if (this[i] === item) return i;
+  }
+  return -1;
+};
 component = function() {
   var F, comp, components, _ref;
   components = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -14,7 +19,7 @@ component = function() {
 };
 ComponentBase = function() {};
 ComponentBase.prototype.extend = function() {
-  var c, components, key, old, val, _i, _len, _ref, _ref2;
+  var c, components, key, old, v, val, _i, _j, _len, _len2, _ref, _ref2;
   components = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
   for (_i = 0, _len = components.length; _i < _len; _i++) {
     c = components[_i];
@@ -32,6 +37,17 @@ ComponentBase.prototype.extend = function() {
         old = this[key];
         this[key] = val;
         this[key]["super"] = old;
+      } else if (val instanceof Array) {
+        if (this[key] != null) {
+          for (_j = 0, _len2 = val.length; _j < _len2; _j++) {
+            v = val[_j];
+            if (__indexOf.call(this[key], v) < 0) {
+              this[key].push(v);
+            }
+          }
+        } else {
+          this[key] = val.slice(0);
+        }
       } else {
         this[key] = val;
       }

@@ -98,14 +98,16 @@ $G = (components...)->
         The same is done for compInit, accumulated in _compInit.
         _lookup and _compinit are used in CMan.genInit
       ###
-      lookup = c._lookup ? []
+      # slice so that we don't hold references to the same array
+      lookup = c._lookup?.slice(0) ? []
       lookup.push(c.lookup) if c.lookup?
       delete c.lookup
-      delete c._lookup 
+      delete c._lookup
       #^ note: _lookup exists to easily differentiate b/w a user-provided
       #        lookup array and a (generated) array of lookup arrays 
 
-      compInit = c._compInit ? []
+      # slice so that we don't hold references to the same array
+      compInit = c._compInit?.slice(0) ? []
       compInit.push(c.compInit) if c.compInit?
       delete c.compInit
       delete c._compInit
@@ -114,7 +116,7 @@ $G = (components...)->
       delete c.compSetup
 
       #TODO: refactor this to just add a new object at the end of the call to $C
-      # to simply how this all works. fewer high order procedures will make this
+      # to simplify how this all works. fewer high order procedures will make this
       # code more maintainable. the new object will simply included the
       # generated init, as well os the generated @_compInit and @_lookup arrays.
       # then genCompSetup will no longer be required
