@@ -42,11 +42,6 @@ vows.describe('Component Extra').addBatch(
         'runs init': (obj)->
           assert.equal(obj.initx, 1)
 
-      'with compSetup':
-        topic: new($G compSetup:-> @compx = 1)
-        'runs compSetup': (obj)->
-          assert.equal(obj.compx, 1)
-
       'with multiple sub-objects':
         topic: new($G {x:2,y:2},{x:1,z:3})
         'has properties from each': (obj)->

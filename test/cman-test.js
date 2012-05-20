@@ -56,16 +56,6 @@ vows.describe('Component Extra').addBatch({
           return assert.equal(obj.initx, 1);
         }
       },
-      'with compSetup': {
-        topic: new ($G({
-          compSetup: function() {
-            return this.compx = 1;
-          }
-        })),
-        'runs compSetup': function(obj) {
-          return assert.equal(obj.compx, 1);
-        }
-      },
       'with multiple sub-objects': {
         topic: new ($G({
           x: 2,

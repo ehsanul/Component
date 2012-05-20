@@ -115,45 +115,9 @@ table td {
   }
     pre, tt, code {
       font-size: 12px; line-height: 18px;
-      font-family: Monaco, Consolas, "Lucida Console", monospace;
+      font-family: Menlo, Monaco, Consolas, "Lucida Console", monospace;
       margin: 0; padding: 0;
     }
-
-/* Modifications */
-body {
-  line-height: 1.5;
-}
-h1, h2, h3, h4, h5, h6 {
-  margin: 10px 0 0 0;
-}
-td.code pre, th.code pre{
-  font-size: 13px;
-  line-height: 1.2;
-}
-#background {
-  left: 550px;
-}
-td.docs, th.docs {
-  max-width: 475px;
-  min-width: 475px;
-}
-.docs pre, .docs pre code {
-  font-family: monospace;
-  font-size: 13px;
-  line-height: 1.2;
-  color: #000;
-}
-.docs pre {
-  display: table;
-  margin-bottom: 15px;
-  padding: 10px;
-  max-width: 458px;
-  border: 1px solid #dedede;
-  background: #f9f9ff;
-}
-.docs p code {
-  padding-bottom: 2px;
-}
 
 
 /*---------------------- Syntax Highlighting -----------------------------*/

@@ -16,11 +16,6 @@ vows.describe('Component Core').addBatch(
       'runs init': (obj)->
         assert.equal(obj.initx, 1)
 
-    'with compSetup':
-      topic: new($C compSetup:-> @compx = 1)
-      'runs compSetup': (obj)->
-        assert.equal(obj.compx, 1)
-
     'with multiple sub-objects':
       topic: new($C {
           a: -> return 9

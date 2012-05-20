@@ -14,15 +14,11 @@ component = function() {
 };
 ComponentBase = function() {};
 ComponentBase.prototype.extend = function() {
-  var c, components, key, old, val, _i, _len, _ref, _ref2;
+  var c, components, key, old, val, _i, _len, _ref;
   components = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
   for (_i = 0, _len = components.length; _i < _len; _i++) {
     c = components[_i];
     c = (_ref = c.prototype) != null ? _ref : c;
-    if ((_ref2 = c.compSetup) != null) {
-      _ref2.apply(this);
-    }
-    delete c.compSetup;
     for (key in c) {
       val = c[key];
       if (!c.hasOwnProperty(key)) {

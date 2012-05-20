@@ -21,16 +21,6 @@ vows.describe('Component Core').addBatch({
         return assert.equal(obj.initx, 1);
       }
     },
-    'with compSetup': {
-      topic: new ($C({
-        compSetup: function() {
-          return this.compx = 1;
-        }
-      })),
-      'runs compSetup': function(obj) {
-        return assert.equal(obj.compx, 1);
-      }
-    },
     'with multiple sub-objects': {
       topic: new ($C({
         a: function() {

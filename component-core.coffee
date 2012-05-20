@@ -250,11 +250,6 @@ ComponentBase::extend = (components...)->
     # Like this: `x = component(a:1); y = component(x, b:2)`
     c = c.prototype ? c
 
-    # Give components "extend-time" access, useful for accumulators etc.
-    # However, it's much simpler to just make a wrapper around `component`
-    c.compSetup?.apply(this)
-    delete c.compSetup
-
     # Copy all key/value pairs from given object to `this`. Create a `super`
     # property for functions that will be overwritten, except `extend`/`super`
     for key, val of c
