@@ -233,7 +233,7 @@ component = (components...)->
   F.prototype = comp
 
   # Give F the same extension interface as a `new MyComponent()`
-  F.extend = -> ComponentBase::extend.apply(F, arguments)
+  F.extend = -> ComponentBase::extend.apply(F.prototype, arguments)
   return F
 
 # Instances of `ComponentBase` serve as prototypes for components. This gives

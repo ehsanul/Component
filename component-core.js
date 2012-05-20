@@ -8,7 +8,7 @@ component = function() {
   F = (_ref = comp.init) != null ? _ref : function() {};
   F.prototype = comp;
   F.extend = function() {
-    return ComponentBase.prototype.extend.apply(F, arguments);
+    return ComponentBase.prototype.extend.apply(F.prototype, arguments);
   };
   return F;
 };

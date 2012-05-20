@@ -3,6 +3,19 @@ vows = require('vows');
 assert = require('assert');
 $C = require('../component-core');
 vows.describe('Component Core').addBatch({
+  'A component': {
+    topic: {
+      comp: $C()
+    },
+    'can be extended': function(obj) {
+      var Comp;
+      Comp = obj.comp;
+      Comp.extend({
+        x: 65
+      });
+      return assert.equal((new Comp).x, 65);
+    }
+  },
   'A component object': {
     topic: new ($C()),
     'can be extended': function(obj) {
