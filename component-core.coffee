@@ -263,12 +263,6 @@ ComponentBase::extend = (components...)->
         old = this[key]
         this[key] = val
         this[key].super = old
-      else if val instanceof Array
-        if this[key]?
-          for v in val
-            this[key].push v unless v in this[key]
-        else
-          this[key] = val.slice(0)
       else
         this[key] = val
   return null
